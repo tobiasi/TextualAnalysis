@@ -304,7 +304,7 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
     corp_dir = 'C:\\Users\\Tobias\\Dropbox\\Master\\Corpora U.S'
     '''
     if 'all' in companies:
-        companies = os.listdir(file_dir+'\\'+file_type)
+        companies = os.listdir(file_dir+'\\'+f_type)
     start =  datetime.datetime.now().time
     for company in companies:
         comp_path = file_dir + '\\' + f_type + '\\' + company

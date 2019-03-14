@@ -307,6 +307,8 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
     if 'all' in companies:
         companies = os.listdir(file_dir+'\\'+f_type)
     start =  datetime.datetime.now().time
+    if not os.path.exists(corp_dir + '\\' + f_type):
+          os.mkdir(corp_dir + '\\' + f_type)
     for company in companies:
         comp_path = file_dir + '\\' + f_type + '\\' + company
         date_path = date_dir + '\\' + f_type + '\\' + company

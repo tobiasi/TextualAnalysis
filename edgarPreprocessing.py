@@ -231,11 +231,11 @@ def sent_to_words(sentences):
     for sentence in sentences: 
         yield(gensim.utils.simple_preprocess(str(sentence), deacc=True)) 
         
-def remove_stopwords(texts):
+def remove_stopwords(texts,stop_words):
     return [[word for word in simple_preprocess(str(doc)) if word 
              not in stop_words] for doc in texts]
     
-def make_bigrams(texts):
+def make_bigrams(texts,bigram_mod):
     return [bigram_mod[doc] for doc in texts]
 
 def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
@@ -257,8 +257,8 @@ def text_prep(text):
         bigram             = gensim.models.Phrases(data_words, min_count=1, 
                                                    threshold=20)
         bigram_mod = gensim.models.phrases.Phraser(bigram)
-        data_words_nostops = remove_stopwords(data_words)
-        data_words_bigrams = make_bigrams(data_words_nostops)
+        data_words_nostops = remove_stopwords(data_words,stop_words)
+        data_words_bigrams = make_bigrams(data_words_nostops,bigram_mod)
 
         data_lemmatized = lemmatization(data_words_bigrams,allowed_postags=[
                                         'NOUN', 'ADJ', 'VERB', 'ADV']) 
@@ -299,9 +299,10 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
     LDA-estimation. Creates a corpora and a dictionary for each filing.
     
     companies = 'all'
-    date_dir = 'C:\\Users\\Tobias\\Dropbox\\Master\\Dates Reports U.S'
-    file_dir = 'C:\\Users\\Tobias\\Dropbox\\Master\\Text Reports U.S'
-    corp_dir = 'C:\\Users\\Tobias\\Dropbox\\Master\\Corpora U.S'
+    f_type    = '10-K'
+    date_dir  = 'C:\\Users\\Tobias\\Dropbox\\Master\\Dates Reports U.S'
+    file_dir  = 'C:\\Users\\Tobias\\Dropbox\\Master\\Text Reports U.S'
+    corp_dir  = 'C:\\Users\\Tobias\\Dropbox\\Master\\Corpora U.S'
     '''
     if 'all' in companies:
         companies = os.listdir(file_dir+'\\'+f_type)
@@ -336,7 +337,7 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
              os.chdir(comp_path)
              with open(date,encoding='utf8') as file:
                text = file.read().splitlines()
-               data_lemmatized = text_prep(text)
+               bigram_mod, data_lemmatized = text_prep(text)
                
              id2word    = corpora.Dictionary(data_lemmatized)
              corpus     = [id2word.doc2bow(text) for text in data_lemmatized]

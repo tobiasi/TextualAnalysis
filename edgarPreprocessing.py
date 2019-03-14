@@ -337,7 +337,7 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
              os.chdir(comp_path)
              with open(date,encoding='utf8') as file:
                text = file.read().splitlines()
-               bigram_mod, data_lemmatized = text_prep(text)
+               data_lemmatized = text_prep(text)
                
              id2word    = corpora.Dictionary(data_lemmatized)
              corpus     = [id2word.doc2bow(text) for text in data_lemmatized]

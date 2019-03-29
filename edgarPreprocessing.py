@@ -336,6 +336,7 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
 #                print(('\nAutomatic exectuion not yet supported. Please run '+
 #                       'get_edgar_filing_text() manually.'))
 #                return
+               
         print('Estimation started: ' +str(start()) +'\n')
         for idx, date in enumerate(ex_text):
              os.chdir(comp_path)

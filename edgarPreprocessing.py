@@ -114,7 +114,8 @@ def get_edgar_filing_date(comp_tuples,f_type,f_dir):
 
     f_type      = '10-K'     [Or '10-Q']
     
-    f_dir       = 'C:\\Users\\Tobias\\Dropbox\\Master\\Dates Reports U.S'
+    f_dir       = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\...
+                                                            Dates Reports U.S'
     
     get_edgar_filing_date(comp_tuples,f_type,f_dir)   
     ---------------------------------------------------------------------------
@@ -130,6 +131,7 @@ def get_edgar_filing_date(comp_tuples,f_type,f_dir):
         table   = soup.find('table', {'class': 'tableFile2'})
         dates = []
         for row in table.findAll('tr')[1:]:
+            if '/A' in row.findAll('td')[0].text: continue
             date = row.findAll('td')[3].text
             dates.append(date)
             
@@ -322,18 +324,18 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
         with open(company + '.pickle', 'rb') as file:
                dates = pickle.load(file)
         
-        non_existing =  [non_existing for non_existing in dates if not 
-                         non_existing in ex_text]
-        if len(non_existing):
-            q   = ('\n'+company + ':: There are '+str(len(non_existing))+
-                   ' text files missing'+
-                  '. Do you want to download these before you continue?')
-            bol =  query_yes_no(q, default = "yes")
-            
-            if bol:
-                print(('\nAutomatic exectuion not yet supported. Please run '+
-                       'get_edgar_filing_text() manually.'))
-                return
+#        non_existing =  [non_existing for non_existing in dates if not 
+#                         non_existing in ex_text]
+#        if len(non_existing):
+#            q   = ('\n'+company + ':: There are '+str(len(non_existing))+
+#                   ' text files missing'+
+#                  '. Do you want to download these before you continue?')
+#            bol =  query_yes_no(q, default = "yes")
+#            
+#            if bol:
+#                print(('\nAutomatic exectuion not yet supported. Please run '+
+#                       'get_edgar_filing_text() manually.'))
+#                return
         print('Estimation started: ' +str(start()) +'\n')
         for idx, date in enumerate(ex_text):
              os.chdir(comp_path)

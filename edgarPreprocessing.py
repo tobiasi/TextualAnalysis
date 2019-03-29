@@ -134,7 +134,8 @@ def get_edgar_filing_date(comp_tuples,f_type,f_dir):
             if '/A' in row.findAll('td')[0].text: continue
             date = row.findAll('td')[3].text
             dates.append(date)
-            
+        if '.' in comp_tuple[0][-1]: 
+            comp_tuple[0] = comp_tuple[0][:-1]
         if not os.path.exists(f_dir + '\\' + f_type + '\\' +  comp_tuple[0]):
             os.mkdir(f_dir +'\\'+ f_type + '\\' + comp_tuple[0])
         os.chdir(f_dir +'\\' + f_type + '\\' + comp_tuple[0])
@@ -205,6 +206,8 @@ def get_edgar_filing_text(comp_tuples,f_type,n_docs,file_dir,dates_dir):
             get_edgar_filing_date([comp_tuple],f_type,dates_dir)
         else:
             os.chdir(dates_dir + '\\' + f_type + '\\' + comp_tuple[0])
+            if '.' in comp_tuple[0][-1]: 
+                comp_tuple[0] = comp_tuple[0][:-1]
             with open(comp_tuple[0] + '.pickle', 'rb') as file:
                 dates = pickle.load(file)
                 dates = dates[:n_docs]

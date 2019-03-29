@@ -324,6 +324,7 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
         with open(company + '.pickle', 'rb') as file:
                dates = pickle.load(file)
         
+        
 #        non_existing =  [non_existing for non_existing in dates if not 
 #                         non_existing in ex_text]
 #        if len(non_existing):

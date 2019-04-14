@@ -24,6 +24,25 @@ from nltk.corpus import stopwords
 from gensim.utils import simple_preprocess
 from fuzzywuzzy   import fuzz
 
+def new_files(filenames,filepath):
+    '''
+    Checks whether the proposed filename already exists. It will return all 
+    filenames which are not found in the indicated folder.
+    
+    Inputs:
+     - filenames : A list with filenames to be evaluated
+         
+     - filepath  : Path for existing files
+         
+    Outputs:
+     - filenames : The non-existing filenames
+     
+    filepath = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\Corpora U.S\\10-K\\3M CO'
+    ''' 
+    existing = os.listdir(filepath)
+    existing = [filename.replace('.txt','') for filename in existing]
+    return [newfiles for newfiles in filenames if not newfiles in existing]
+
 def get_sp500_tickers_cik_industry_name(f_dir):
     '''
     ---------------------------------------------------------------------------
@@ -218,8 +237,6 @@ def get_edgar_filing_text(comp_tuples,f_type,n_docs,file_dir,dates_dir):
            f = open(date.replace('.pickle','')+'.txt','w',encoding='utf8')
            f.write(str(doc))
            f.close()
-#            with open(date + '.pickle' , 'wb') as file:
-#                pickle.dump(str(doc), file)
         mes=('Status: '+str( int((idx+1)/len(comp_tuples)*100) )+ '% done')
         sys.stdout.write('\r'+mes) 
         
@@ -305,9 +322,9 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
     
     companies = 'all'
     f_type    = '10-K'
-    date_dir  = 'C:\\Users\\Tobias\\Dropbox\\Master\\Dates Reports U.S'
-    file_dir  = 'C:\\Users\\Tobias\\Dropbox\\Master\\Text Reports U.S'
-    corp_dir  = 'C:\\Users\\Tobias\\Dropbox\\Master\\Corpora U.S'
+    date_dir  = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\Dates Reports U.S'
+    file_dir  = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\Text Reports U.S'
+    corp_dir  = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\Corpora U.S'
     '''
     if 'all' in companies:
         companies = os.listdir(file_dir+'\\'+f_type)
@@ -326,7 +343,7 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
         os.chdir(date_path)
         with open(company + '.pickle', 'rb') as file:
                dates = pickle.load(file)
-        
+        ex_text = new_files(dates,comp_path)
         
 #        non_existing =  [non_existing for non_existing in dates if not 
 #                         non_existing in ex_text]
@@ -340,7 +357,8 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
 #                print(('\nAutomatic exectuion not yet supported. Please run '+
 #                       'get_edgar_filing_text() manually.'))
 #                return
-               
+        if not ex_text:
+            continue
         print('Estimation started: ' +str(start()) +'\n')
         for idx, date in enumerate(ex_text):
              os.chdir(comp_path)
@@ -413,7 +431,6 @@ comp_tuples = [['APPLE INC'                           , '0000320193'],
                ['HONEYWELL INTERNATIONAL INC'         , '0000773840'],
                ['LILLY ELI & CO'                      , '0000059478'],
                ['THERMO FISHER SCIENTIFIC INC.'       , '0000097745']]
-
 
 
 

@@ -13,6 +13,26 @@ import pandas as pd
 import numpy  as np
 import datetime
 
+
+def new_files(filenames,filepath):
+    '''
+    Checks whether the proposed filename already exists. It will return all 
+    filenames which are not found in the indicated folder.
+    
+    Inputs:
+     - filenames : A list with filenames to be evaluated
+         
+     - filepath  : Path for existing files
+         
+    Outputs:
+     - filenames : The non-existing filenames
+     
+    filepath = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\Corpora U.S\\10-K\\3M CO'
+    ''' 
+    existing = os.listdir(filepath)
+    existing = [filename.replace('.txt','') for filename in existing]
+    return [newfiles for newfiles in filenames if not newfiles in existing]
+
 def lda_estimation(corp_path,model_path,f_type,options):
     '''
     Function to run LDA estimation on corpora. 
@@ -37,8 +57,8 @@ def lda_estimation(corp_path,model_path,f_type,options):
 
     Examples:
         
-        corp_path  = 'C:\\Users\\Tobias\\Dropbox\\Master\\Corpora U.S'
-        model_path = 'C:\\Users\\Tobias\\Dropbox\\Master\\Model U.S'
+        corp_path  = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\Corpora U.S'
+        model_path = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\Model U.S'
         f_type     = '10-K'
         
         # Set parameters
@@ -77,7 +97,7 @@ def lda_estimation(corp_path,model_path,f_type,options):
         comp_path_mod  = mod_path_ex  + '\\' + company
         corpFiles = fnmatch.filter(os.listdir(comp_path_corp), '*corpus*')
         dictFiles = fnmatch.filter(os.listdir(comp_path_corp), '*dictionary*')
-        ex_models = fnmatch.filter(os.listdir(comp_path_corp), 'LDAtopics.*')
+        ex_models = fnmatch.filter(os.listdir(comp_path_mod), 'LDAtopics.*')
         periods   = [filename.split('.')[2] for filename in corpFiles]
         if options[7] or not ex_models:
             corpFilesOut = corpFiles
@@ -85,7 +105,7 @@ def lda_estimation(corp_path,model_path,f_type,options):
         else:
             cleanVec_c = [filename.split('.')[2] for filename in corpFiles]
             cleanVec_m = [filename.split('.')[1] for filename in ex_models]
-            newFiles   = [newfiles for newfiles in cleanVec_c if not newfiles 
+            newFiles   = [newfiles for newfiles in cleanVec_c if not newfiles
                           in cleanVec_m]
             p1_corp    = 'corpus.'     + company + '.'
             p1_dict    = 'dictionary.' + company + '.'
@@ -96,7 +116,7 @@ def lda_estimation(corp_path,model_path,f_type,options):
             for period in newFiles:
                 corpFilesOut = np.append(corpFilesOut,p1_corp+period+p2)
                 dictFilesOut = np.append(dictFilesOut,p1_dict+period+p2)
-             
+            
         files = zip(periods,corpFilesOut,dictFilesOut)
         for idy, (period,corpfile,dictfile) in enumerate(files):
             os.chdir(comp_path_corp)

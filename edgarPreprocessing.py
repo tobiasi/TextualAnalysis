@@ -338,13 +338,14 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
         
         if not os.path.exists(corp_path):
             os.mkdir(corp_path)
-        ex_text = os.listdir(corp_path)
-        
+        corpfiles  = fnmatch.filter(os.listdir(corp_path), '*corpus*')
+        ex_text    = [file.split('.')[2] for file in corpfiles]
         # Find all existing dates
         os.chdir(date_path)
         with open(company + '.pickle', 'rb') as file:
                dates = pickle.load(file)
-        ex_text = new_files(dates,corp_path)
+               
+        ex_text = [file for file in dates if not file in ex_text]
         
 #        non_existing =  [non_existing for non_existing in dates if not 
 #                         non_existing in ex_text]
@@ -371,11 +372,11 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
              corpus     = [id2word.doc2bow(text) for text in data_lemmatized]
              dictionary = corpora.Dictionary(data_lemmatized)
              corpus     =[dictionary.doc2bow(text) for text in data_lemmatized]
-             if not os.path.exists(corp_dir + '\\' + f_type+'\\'+company):
-                 os.mkdir(corp_dir + '\\' + f_type +'\\'+company)
-             os.chdir(corp_dir + '\\' + f_type +'\\'+company)
-             pickle.dump(corpus, open(('corpus.'+company+'.'+date), 'wb'))
-             dictionary.save('dictionary.'+company+'.'+date)
+             if not os.path.exists(corp_path):
+                 os.mkdir(corp_path)
+             os.chdir(corp_path)
+             pickle.dump(corpus, open(('corpus.'+company+'.'+date+'.txt'), 'wb'))
+             dictionary.save('dictionary.'+company+'.'+date+'.txt')
              mes = (
              str(int((idx+1)/len(ex_text)*100))+'% done with '+company+'.')
              sys.stdout.write('\r'+mes) 

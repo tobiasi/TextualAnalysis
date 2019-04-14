@@ -334,16 +334,17 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
     for company in companies:
         comp_path = file_dir + '\\' + f_type + '\\' + company
         date_path = date_dir + '\\' + f_type + '\\' + company
+        corp_path = corp_dir + '\\' + f_type +'\\'+company
         
-        if not os.path.exists(comp_path):
-            os.mkdir(comp_path)
-        ex_text = os.listdir(comp_path)
+        if not os.path.exists(corp_path):
+            os.mkdir(corp_path)
+        ex_text = os.listdir(corp_path)
         
         # Find all existing dates
         os.chdir(date_path)
         with open(company + '.pickle', 'rb') as file:
                dates = pickle.load(file)
-        ex_text = new_files(dates,comp_path)
+        ex_text = new_files(dates,corp_path)
         
 #        non_existing =  [non_existing for non_existing in dates if not 
 #                         non_existing in ex_text]

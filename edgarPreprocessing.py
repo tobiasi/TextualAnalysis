@@ -19,6 +19,7 @@ import numpy as np
 import sys
 import gensim
 import en_core_web_sm
+import fnmatch
 import gensim.corpora as corpora
 from nltk.corpus import stopwords
 from gensim.utils import simple_preprocess
@@ -339,13 +340,13 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
         if not os.path.exists(corp_path):
             os.mkdir(corp_path)
         corpfiles  = fnmatch.filter(os.listdir(corp_path), '*corpus*')
-        ex_text    = [file.split('.')[2] for file in corpfiles]
+        ex_text_t    = [file.split('.')[-2] for file in corpfiles]
         # Find all existing dates
         os.chdir(date_path)
         with open(company + '.pickle', 'rb') as file:
                dates = pickle.load(file)
                
-        ex_text = [file for file in dates if not file in ex_text]
+        ex_text = [date for date in dates if not date in ex_text_t]
         
 #        non_existing =  [non_existing for non_existing in dates if not 
 #                         non_existing in ex_text]

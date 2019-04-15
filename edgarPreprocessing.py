@@ -271,7 +271,13 @@ def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     return texts_out
 
 def text_prep(text):
-        dataTe     = list(sent_to_words(text))
+        text = max(text, key=len)
+        if len(max(text, key=len))<1000000:
+            dataTe     = list(sent_to_words(text))
+        else:
+            dataTe1 = list(sent_to_words(text[:500000]))
+            dataTe2 = list(sent_to_words(text[500000:]))
+            dataTe  = dataTe1+dataTe2
         dataTe     = [x for x in dataTe if x != '']
         data_words = [x for x in dataTe if x != []]
         stop_words = stopwords.words('english')

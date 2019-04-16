@@ -374,7 +374,7 @@ def edgar_text_to_corpora(companies,file_dir,date_dir,corp_dir,f_type):
              os.chdir(comp_path)
              with open(date+'.txt',encoding='utf8') as file:
                text = file.read().splitlines()
-               if max(text, key=len)>1000000: break                   
+               if len(max(text, key=len))>1000000: break                   
                data_lemmatized = text_prep(text)
                
              id2word    = corpora.Dictionary(data_lemmatized)

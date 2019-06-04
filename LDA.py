@@ -102,6 +102,7 @@ def lda_estimation(corp_path,model_path,f_type,options):
         if options[7] or not ex_models:
             corpFilesOut = corpFiles
             dictFilesOut = dictFiles
+            newFiles     = periods
         else:
             cleanVec_c = [filename.split('.')[2] for filename in corpFiles]
             cleanVec_m = [filename.split('.')[1] for filename in ex_models]

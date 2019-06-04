@@ -117,8 +117,8 @@ def lda_estimation(corp_path,model_path,f_type,options):
                 corpFilesOut = np.append(corpFilesOut,p1_corp+period+p2)
                 dictFilesOut = np.append(dictFilesOut,p1_dict+period+p2)
             
-        files = zip(periods,corpFilesOut,dictFilesOut)
-        for idy, (newFiles,corpfile,dictfile) in enumerate(files):
+        files = zip(newFiles,corpFilesOut,dictFilesOut)
+        for idy, (period,corpfile,dictfile) in enumerate(files):
             os.chdir(comp_path_corp)
             dictionary = gensim.corpora.Dictionary.load(dictfile)
             corpus     = pickle.load(open(corpfile, 'rb'))

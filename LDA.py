@@ -118,7 +118,7 @@ def lda_estimation(corp_path,model_path,f_type,options):
                 dictFilesOut = np.append(dictFilesOut,p1_dict+period+p2)
             
         files = zip(periods,corpFilesOut,dictFilesOut)
-        for idy, (period,corpfile,dictfile) in enumerate(files):
+        for idy, (newFiles,corpfile,dictfile) in enumerate(files):
             os.chdir(comp_path_corp)
             dictionary = gensim.corpora.Dictionary.load(dictfile)
             corpus     = pickle.load(open(corpfile, 'rb'))
@@ -140,11 +140,11 @@ def lda_estimation(corp_path,model_path,f_type,options):
                                            lda_model.show_topic(t, topn = 10)])
                 
             if idx == 0:
-                mes = (str(int((idy+1)/len(periods)*100))+ '% done with ' 
+                mes = (str(int((idy+1)/len(corpFilesOut)*100))+ '% done with ' 
                        + company +
                        '.  || This is the first company in the folder.')
             else:
-                mes = (str(int((idy+1)/len(periods)*100)) + '% done with ' 
+                mes = (str(int((idy+1)/len(corpFilesOut)*100)) + '% done with ' 
                        + company + '.  ||  ' +
                        str(int((idx+1)/len(companies)*100))+ 
                        '% done with folder.' + ' '*50)
@@ -176,8 +176,8 @@ overwrite       = False
 options = [num_topics,random_state,update_every,
            chunksize,passes,alpha,per_word_topics,overwrite]
 
-corp_path  = 'C:\\Users\\Tobias\\Dropbox\\Master\\Corpora U.S'
-model_path = 'C:\\Users\\Tobias\\Dropbox\\Master\\Model U.S'
+corp_path  = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\Corpora U.S'
+model_path = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\Model U.S'
 f_type     = '10-K'     
 
  

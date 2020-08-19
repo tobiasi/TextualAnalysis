@@ -10,7 +10,7 @@ We are interested in extracting two things:
     (iii) The text from the filings-> Create corporas & dictionaries
 """
 import datetime
-import edgar
+from edgar import Company
 import bs4 as bs
 import os
 import pickle
@@ -134,8 +134,7 @@ def get_edgar_filing_date(comp_tuples,f_type,f_dir):
 
     f_type      = '10-K'     [Or '10-Q']
     
-    f_dir       = 'C:\\Users\\Tobias\\Dropbox\\Master\\U.S. Data\\...
-                                                            Dates Reports U.S'
+    f_dir       = '/Users/tobias/Dropbox/textfolder/U.S. Data/Dates Reports U.S'
     
     get_edgar_filing_date(comp_tuples,f_type,f_dir)   
     ---------------------------------------------------------------------------
@@ -156,9 +155,10 @@ def get_edgar_filing_date(comp_tuples,f_type,f_dir):
             dates.append(date)
         if '.' in comp_tuple[0][-1]: 
             comp_tuple[0] = comp_tuple[0][:-1]
-        if not os.path.exists(f_dir + '\\' + f_type + '\\' +  comp_tuple[0]):
-            os.mkdir(f_dir +'\\'+ f_type + '\\' + comp_tuple[0])
-        os.chdir(f_dir +'\\' + f_type + '\\' + comp_tuple[0])
+        dir = os.path.join(f_dir, f_type,comp_tuple[0])
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        os.chdir(dir)
         with open(comp_tuple[0] + '.pickle', 'wb') as file:
             pickle.dump(dates, file)
             
@@ -202,9 +202,9 @@ def get_edgar_filing_text(comp_tuples,f_type,n_docs,file_dir,dates_dir):
     
     n_docs      = 3
     
-    file_dir    = 'C:\\Users\\Tobias\\Dropbox\\Master\\Text Reports U.S.'
+    file_dir    = 'Users/Tobias/Dropbox/textfolder/Text Reports U.S.'
     
-    dates_dir   = 'C:\\Users\\Tobias\\Dropbox\\Master\\Dates Reports U.S' 
+    dates_dir   = 'Users/Tobias/Dropbox/textfolder/Dates Reports U.S' 
                    
     get_edgar_filing_text(comp_tuples,f_type,n_docs,file_dir,dates_dir)
     ---------------------------------------------------------------------------
@@ -214,25 +214,27 @@ def get_edgar_filing_text(comp_tuples,f_type,n_docs,file_dir,dates_dir):
     print('-'*80+ '\n')
     for idx, comp_tuple in enumerate(comp_tuples):
         comp = edgar.Company(comp_tuple[0],comp_tuple[1])
-        tree = comp.getAllFilings(filingType = f_type)
-        docs = edgar.getDocuments(tree, noOfDocuments=n_docs)
+        tree = comp.get_all_filings(filing_type=f_type)
+        docs = Company.get_documents(tree, no_of_documents=n_docs)
         
         # Now that we have the filings, find get the filing dates for each 
         # document. If we have them already, then great, let's load them. If 
         # not, call get_edgar_filing_date to get them for this company.
-        if not os.path.exists(dates_dir+ '\\' + f_type + '\\' + comp_tuple[0]):
+        dir = os.path.join(dates_dir, f_type,comp_tuple[0])
+        if not os.path.exists(dir):
             print(('\nCannot find the dates for ' + comp_tuple[0] +
-                   '. Attempts to download them...'))
+                   '. Attempting to download them...'))
             get_edgar_filing_date([comp_tuple],f_type,dates_dir)
         else:
-            os.chdir(dates_dir + '\\' + f_type + '\\' + comp_tuple[0])
+            os.chdir(dir)
             if '.' in comp_tuple[0][-1]: 
                 comp_tuple[0] = comp_tuple[0][:-1]
             with open(comp_tuple[0] + '.pickle', 'rb') as file:
                 dates = pickle.load(file)
                 dates = dates[:n_docs]
+        dir = os.path.join(file_dir + '\\' + f_type + '\\'+comp_tuple[0])
         if not os.path.exists(file_dir + '\\' + f_type + '\\'+comp_tuple[0]):
-            os.mkdir(file_dir + '\\' + f_type +'\\'+comp_tuple[0])
+            os.makedirs(file_dir + '\\' + f_type +'\\'+comp_tuple[0])
         os.chdir(file_dir + '\\' + f_type +'\\'+comp_tuple[0])
         for date, doc in zip(dates,docs):
            f = open(date.replace('.pickle','')+'.txt','w',encoding='utf8')
